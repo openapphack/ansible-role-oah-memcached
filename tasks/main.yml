@@ -1,26 +1,17 @@
 ---
-# Include variables and define needed variables.
-- name: Include OS-specific variables.
-  include_vars: "{{ ansible_os_family }}.yml"
+- include: tasks/oah-install.yml
+  when: oah_command == "install"
 
-- name: Define memcached_user.
-  set_fact:
-    memcached_user: "{{ __memcached_user }}"
-  when: memcached_user is not defined
+- include: tasks/oah-update.yml
+  when: oah_command == "update"
 
-# Setup/install tasks.
-- include: setup-Debian.yml
-  when: ansible_os_family == 'Debian'
+- include: tasks/oah-remove.yml
+  when: oah_command == "remove"
 
-# Configure Memcached.
-- name: Copy Memcached configuration.
-  template:
-    src: memcached-{{ ansible_os_family }}.conf.j2
-    dest: "{{ memcached_config_file }}"
-    owner: root
-    group: root
-    mode: 0644
-  notify: restart memcached
+- include: tasks/oah-reset.yml
+  when: oah_command == "reset"
 
-- name: Ensure Memcached is started and set to run on startup.
-  service: name=memcached state=started enabled=yes
+- include: tasks/oah-validate.yml
+  when: oah_command == "validate"
+
+#- include: tasks/oah-{{ oah_command }}.yml

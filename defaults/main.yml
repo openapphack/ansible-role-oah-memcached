@@ -1,4 +1,5 @@
 ---
+oah_command: install
 memcached_port: 11211
 memcached_listen_ip: 127.0.0.1
 
